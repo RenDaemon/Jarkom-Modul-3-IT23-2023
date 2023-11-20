@@ -35,7 +35,7 @@ echo "\$TTL    604800
                         604800 )      ; Negative Cache TTL
 ;
 @       IN      NS      riegel.canyon.it23.com.
-@       IN      A       10.75.2.3 #4.1/2.3(Eisen)
+@       IN      A       10.75.2.3 ;4.1/2.3(Eisen)
 www     IN      CNAME   riegel.canyon.it23.com." > /etc/bind/it23/riegel.canyon.it23.com
 
 
@@ -49,7 +49,7 @@ echo "\$TTL    604800
                         604800 )      ; Negative Cache TTL
 ;
 @          IN     NS      granz.channel.it23.com.
-@          IN     A       10.75.2.3 #3.1/2.3 (Eisen)
+@          IN     A       10.75.2.3 ;3.1/2.3 (Eisen)
 www        IN     CNAME   granz.channel.it23.com." > /etc/bind/it23/granz.channel.it23.com
 
 # Restart Bind9

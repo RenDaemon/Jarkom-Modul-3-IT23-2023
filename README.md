@@ -9,6 +9,8 @@
 
 # Laporan Resmi
 ## Daftar Isi
+- [Topologi](#topologi)
+- [Soal 0](#soal-0)
 - [Soal 1](#soal-1)
 - [Soal 2](#soal-2)
 - [Soal 3](#soal-3)
@@ -30,6 +32,480 @@
 - [Soal 19](#soal-19)
 - [Soal 20](#soal-20)
 
+### Pre-requisites
+#### Topologi
+Buatlah topologi sesuai dengan yang tertera di soal seperti gambar berikut :
+![topologi](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/94961661/d1793e87-6db1-46b6-b328-80451301ee9b) 
+
+#### Konfigurasi Network :
+- **Aura (DHCP Relay & Router)**
+```
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet static
+	address 10.75.1.1
+	netmask 255.255.255.0
+
+auto eth2
+iface eth2 inet static
+	address 10.75.2.1
+	netmask 255.255.255.0
+
+auto eth3
+iface eth3 inet static
+	address 10.75.3.0
+	netmask 255.255.255.0
+
+auto eth4
+iface eth4 inet static
+	address 10.75.4.0
+	netmask 255.255.255.0
+
+```
+- **Himmel (DHCP Server)**
+```
+auto eth0
+iface eth0 inet static
+	address 10.75.1.2
+	netmask 255.255.255.0
+	gateway 10.75.1.1
+
+```
+- **Heiter (DNS Server)**
+```
+auto eth0
+iface eth0 inet static
+	address 10.75.1.3
+	netmask 255.255.255.0
+	gateway 10.75.1.1
+```
+- **Denken (Database Server)**
+```
+auto eth0
+iface eth0 inet static
+	address 10.75.2.2
+	netmask 255.255.255.0
+	gateway 10.75.2.1
+```
+- **Eisen (Load Balancer)**
+```
+auto eth0
+iface eth0 inet static
+	address 10.75.2.3
+	netmask 255.255.255.0
+	gateway 10.75.2.1
+```
+- **Frieren (Laravel Worker)**
+```
+auto eth0
+iface eth0 inet static
+	address 10.75.4.1
+	netmask 255.255.255.0
+	gateway 10.75.4.0
+
+```
+- **Flamme (Laravel Worker)**
+```
+auto eth0
+iface eth0 inet static
+	address 10.75.4.2
+	netmask 255.255.255.0
+	gateway 10.75.4.0
+
+```
+- **Fern (Laravel Worker)**
+```
+auto eth0
+iface eth0 inet static
+	address 10.75.4.3
+	netmask 255.255.255.0
+	gateway 10.75.4.0
+
+```
+- **Lawine (PHP Worker)**
+```
+auto eth0
+iface eth0 inet static
+	address 10.75.3.1
+	netmask 255.255.255.0
+	gateway 10.75.3.0
+
+```
+- **Linie (PHP Worker)**
+```
+auto eth0
+iface eth0 inet static
+	address 10.75.3.2
+	netmask 255.255.255.0
+	gateway 10.75.3.0
+
+```
+- **Lugner (PHP Worker)**
+```
+auto eth0
+iface eth0 inet static
+	address 10.75.3.3
+	netmask 255.255.255.0
+	gateway 10.75.3.0
+
+```
+- **Sein, dan Stark, Revolte, dan Richter (Clients)**
+```
+auto eth0
+iface eth0 inet dhcp
+```
+
+### Soal 0
+#### Descrription :
+Diminta untuk melakukan register domain berupa riegel.canyon.yyy.com untuk worker Laravel dan granz.channel.yyy.com untuk worker PHP
+
+#### PoC :
+Disini kita hanya perlu melakukan register 2 domain tersebut ke worker php yang memiliki prefik ip [prefix IP].x.1
+
+#### Installing 
+```sh
+    # Install Bind9
+    apt-get update
+    apt-get install bind9 -y
+
+    mkdir /etc/bind/it23
+``` 
+
+#### Zoning
+```sh
+    # Create the named.conf.local file
+echo 'zone "riegel.canyon.it23.com" {
+    type master;
+    file "/etc/bind/it23/riegel.canyon.it23.com";
+};
+
+zone "granz.channel.it23.com" {
+    type master;
+    file "/etc/bind/it23/granz.channel.it23.com";
+};
+
+' > /etc/bind/named.conf.local
+```
+
+#### DNS Record
+```sh
+# DNS record for riegel.canyon
+echo "\$TTL    604800
+@       IN      SOA     riegel.canyon.it23.com. root.riegel.canyon.it23.com. (
+                            2         ; Serial
+                        604800        ; Refresh
+                        86400         ; Retry
+                        2419200       ; Expire
+                        604800 )      ; Negative Cache TTL
+;
+@       IN      NS      riegel.canyon.it23.com.
+@       IN      A       10.75.4.1
+www     IN      CNAME   riegel.canyon.it23.com." > /etc/bind/it23/riegel.canyon.it23.com
+
+
+# DNS record for granz.channel
+echo "\$TTL    604800
+@          IN      SOA  granz.channel.it23.com. root.granz.channel.it23.com. (
+                            2         ; Serial
+                        604800        ; Refresh
+                        86400         ; Retry
+                        2419200       ; Expire
+                        604800 )      ; Negative Cache TTL
+;
+@          IN     NS      granz.channel.it23.com.
+@          IN     A       10.75.3.1
+www        IN     CNAME   granz.channel.it23.com." > /etc/bind/it23/granz.channel.it23.com
+```
+Setelah semua konfigurasi tersebut selesai tinggal restart nginx dan DNS server sudah menyala. Setup selengkapnya dapat dilihat di ![Heiter](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/blob/main/dns/heiter.sh)
+
+### Soal 1
+#### Description :
+Semua CLIENT harus menggunakan konfigurasi dari DHCP Server.
+
+#### PoC :
+Karena semua network client bersifat dinamis menggunakan dhcp, kita harus melakukan setup dhcp server terlebih dahulu
+
+## Berikut ketentuan setup untuk dhcp server :
+### Soal 2
+#### Description :
+Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80
+
+```sh
+subnet 10.75.3.0 netmask 255.255.255.0 {
+  range 10.75.3.16 10.75.3.32;
+...
+```
+
+### Soal 3
+#### Description :
+Client yang melalui Switch4 mendapatkan range IP dari [prefix IP].4.12 - [prefix IP].4.20 dan [prefix IP].4.160 - [prefix IP].4.168 
+
+```sh
+subnet 10.75.4.0 netmask 255.255.255.0 {
+  range 10.75.4.12 10.75.4.20;
+  ...
+```
+### Soal 4
+#### Description :
+Client mendapatkan DNS dari Heiter dan dapat terhubung dengan internet melalui DNS tersebut. Jika setup dhcp server dan relay sudah valid maka harusnya saat menghubungkan ke client akan secara otomatis akan mendapatkan ip sesuai yang diatur dan nameserver mendapatkan nameserver dns server (Heiter)
+
+### Soal 5
+#### Description :
+Lama waktu DHCP server meminjamkan alamat IP kepada Client yang melalui Switch3 selama 3 menit sedangkan pada client yang melalui Switch4 selama 12 menit. Dengan waktu maksimal dialokasikan untuk peminjaman alamat IP selama 96 menit.
+
+- Switch 3
+```sh
+...
+  default-lease-time 180; # 3 menit
+  max-lease-time 5760; # 96 menit
+}
+```
+
+- Switch 4
+```sh
+  default-lease-time 720; # 12 menit
+  max-lease-time 5760; # 96 menit
+}
+```
+#### Testing Client
+Langkah pertama yang harus dilakukan setlah melakukan semua setup adalah menjalankan ketiga service terlebih dahulu yaitu :
+- DNS server ![Heiter](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/blob/main/dns/heiter.sh)
+- DHCP server ![Himmel](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/blob/main/dhcp/himmel.sh)
+- DHCP relay ![Aura](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/blob/main/router/aura.sh)
+
+##### Start DNS, DHCP, Relay
+![init](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/94961661/9cb59615-c1b2-49a2-a151-af6736ed3061)
+
+##### Connect client stark
+![client](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/94961661/b55cc877-8843-44dc-bdac-7153e8aba33c)
+
+Coba hubungkan ke salah satu client, jika konfigurasi sudah berhasil harusnya di setiap client mendapatkan ip sesuai dengan range yang telah kita set di dhcp server.
+
+###### ping google.com || 8.8.8.8
+![google](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/94961661/0e7f8626-ab8c-4056-a6d1-3a41b5bed241)
+
+###### ping domain name
+![domain](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/94961661/9f2b6cb8-bfba-4151-86c4-a5b704afc9a9)
+
+
+### Soal 6
+#### Description :
+Pada masing-masing worker PHP, lakukan konfigurasi virtual host untuk website berikut dengan menggunakan php 7.3
+
+#### Instalasi
+Pada setiap worker php lakukan beberpa instalasi sebagai berikut :
+```sh
+#Utils Installation
+apt-get update
+apt-get install nginx -y
+apt-get install wget -y
+apt-get install unzip -y
+apt-get install lynx -y
+apt-get install htop -y
+apt-get install apache2-utils -y
+apt-get install php7.3-fpm php7.3-common php7.3-mysql php7.3-gmp php7.3-curl php7.3-intl php7.3-mbstring php7.3-xmlrpc php7.3-gd php7.3-xml php7.3-cli php7.3-zip -y
+```
+Kemudian download attachmet yang diperlukan!
+```sh
+#Attachments
+wget -O '/var/www/granz.channel.it23.com' 'https://drive.google.com/u/0/uc?id=1ViSkRq7SmwZgdK64eRbr5Fm1EGCTPrU1&export=download'
+unzip -o /var/www/granz.channel.it23.com -d /var/www/
+rm /var/www/granz.channel.it23.com
+mv /var/www/modul-3 /var/www/granz.channel.it23.com
+```
+
+Nginx Config
+```sh
+cp /etc/nginx/sites-available/default /etc/nginx/sites-available/granz.channel.it23.com
+ln -s /etc/nginx/sites-available/granz.channel.it23.com /etc/nginx/sites-enabled/
+rm /etc/nginx/sites-enabled/default
+```
+```sh
+echo 'server {
+    listen 80;
+    server_name _;
+
+    root /var/www/granz.channel.it23.com;
+    index index.php index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php7.3-fpm.sock;  # Sesuaikan versi PHP dan socket
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}' > /etc/nginx/sites-available/granz.channel.it23.com
+```
+Kemudian tinggal restart server nginx.
+
+Jangan lupa setup config load balancer
+```sh
+echo 'upstream worker 
+    server 10.75.3.1;
+    server 10.75.3.2;
+    server 10.75.3.3;
+}
+
+server {
+    listen 80;
+    server_name granz.channel.it23.com www.granz.channel.it23.com;
+
+    root /var/www/html;
+
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name _;
+
+    location / {
+
+        proxy_pass http://worker;
+    }
+} ' > /etc/nginx/sites-available/lb_php
+
+ln -s /etc/nginx/sites-available/lb_php /etc/nginx/sites-enabled/
+rm /etc/nginx/sites-enabled/default
+
+service nginx restart
+```
+Untuk script setup selengkapnya dapat dilihat di ![eisen](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/blob/main/load-balancer/eisen.sh)
+
+Kemudian untuk testing gunakan command `lynx http://10.75.2.3/`, jika semua setup sudah valid dan sudah terdeploy maka outputnya akan menjadi seperti berikut
+![testphp](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/94961661/b2c819ae-14db-44e4-9864-ae040fa0792b)
+
+### Soal 7
+#### Description :
+Aturlah agar Eisen dapat bekerja dengan maksimal, lalu lakukan testing dengan 1000 request dan 100 request/second.
+
+Untuk testing pada poin ini kita gunakan command `ab -n 1000 -c 100 http://10.75.2.3/`. Outputnya akan berupa benchmark dari 1000 request dengan 100 req/s
+![benchmark](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/94961661/992f9802-ee3a-47f3-98e8-9e106b79bfa8)
+
+### Soal 8
+#### Description :
+Buatlah analisis hasil testing dengan 200 request dan 10 request/second masing-masing algoritma Load Balancer.
+
+#### PoC :
+Pada poin ke 8 ini kita diminta untuk melakukan perbandingan antar algoritma load balancer berdasakan request per second.
+
+Tambahkan config berikut pada eisen
+```sh
+echo 'upstream worker {
+    # least_conn;
+    # ip_hash;
+    # hash $request_uri consistent;
+    server 10.75.3.1;
+    server 10.75.3.2;
+    server 10.75.3.3;
+}
+```
+Secara default kita sebelumnya menggunakan algoritma load balancer, untuk menggantinya tinggal uncomment salah satu algoritma yg sudah dijalankan dan lakukan benchmarking ulang
+dengan command `ab -n 200 -c 10 http://10.75.2.3/`
+
+Hasilnya kurang lebih sama ketika dijalankan, karena kita diminta untuk menganalisis perbandingan request per second maka dibuat grafik :
+![graphLoadbalancer](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/94961661/63288bcd-a958-473d-a918-da0f5ac73df9)
+
+### Soal 9
+#### Description :
+Dengan menggunakan algoritma Round Robin, lakukan testing dengan menggunakan 3 worker, 2 worker, dan 1 worker sebanyak 100 request dengan 10 request/second, kemudian tambahkan grafiknya pada grimoire
+
+#### PoC :
+Hampir mirip seperti poin sebelumnya, namun kali ini kita testing menggunakan algoritma round robbin dengan perbandingan jumlah worker
+
+Edit config upstream berikut pada eisen
+```sh
+echo 'upstream worker {
+    server 10.75.3.1;
+    server 10.75.3.2;
+    server 10.75.3.3;
+}
+```
+Untuk mengubah" jumlah worker tinggal comment salah satu daritiga server tersebut dan jalankan secara bertahap, menggunakan command `ab -n 100 -c 10 http://10.75.2.3/ `  
+Berikut hasil grafik grimoirenya :
+![graphWorker](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/94961661/f0612461-8395-4788-825d-245bdbacac07)
+
+Untuk penjelasan detail tentang grafik di grimoire bisa diakses pada link berikut : https://its.id/m/IT23_Grimoire
+
+### Soal 10
+#### Description :
+tambahkan konfigurasi autentikasi di LB dengan dengan kombinasi username: “netics” dan password: “ajkyyy”, dengan yyy merupakan kode kelompok. Terakhir simpan file “htpasswd” nya di /etc/nginx/rahasisakita/
+
+#### PoC :
+Pada poin ke-10 ini kita diminta untuk menambahkan proses authentikasi pada load balancer eisen. 
+
+Tambahkan config berikut:
+```sh
+# Creating a directory for htpasswd file
+mkdir -p /etc/nginx/rahasisakita
+
+# Creating an htpasswd file and adding a user
+htpasswd -b -c /etc/nginx/rahasisakita/htpasswd netics ajkit23
+
+location /{
+
+...
+    # Adding basic authentication
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/rahasisakita/htpasswd;
+...    
+}
+```
+Config selengkapnya dapat diakses di ![eisen](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/blob/main/load-balancer/eisen.sh)
+
+Untuk testing ketika kita akses `lynx http://10.75.2.3/`, harusnya perlu untuk memasukkan username:password yang sudah kita setup untuk akses
+
+![username](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/94961661/0bef5660-f557-43b4-923c-b21dc916b53d)
+![password](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/94961661/6582e6ba-024a-4db2-b330-aa345c51cb94)
+
+### Soal 11
+#### Description :
+Lalu buat untuk setiap request yang mengandung /its akan di proxy passing menuju halaman https://www.its.ac.id. (11) hint: (proxy_pass)
+
+#### PoC :
+Untuk poin 11 kita diminta forward request ke https://www.its.ac.id jika mengandung /its
+
+Tambahkan location baru di config seperti berikut:
+```sh
+    location ~ /its {
+        proxy_pass https://www.its.ac.id;
+        proxy_set_header Host www.its.ac.id;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+```
+Jika setup config sudah valid maka setiap request ke /its akan diarahkan ke www.its.ac.id. Coba hubungkan dengan menggunakan `lynx http://10.75.2.3/its`
+Maka tampilannya akan berubah menjadi seperti ini :
+![its](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/94961661/fb44b2c8-9939-438d-a5c1-4a28b5988dd9)
+
+### Soal 12
+#### Description :
+Selanjutnya LB ini hanya boleh diakses oleh client dengan IP [Prefix IP].3.69, [Prefix IP].3.70, [Prefix IP].4.167, dan [Prefix IP].4.168
+
+#### PoC :
+Untuk poin 12 kita diminta untuk mebatasi akses ke website hanya untuk beberapa ip saja. 
+
+Tambahkan config sebgai berikut :
+```sh
+    location / {
+
+        allow 10.75.3.69;
+        allow 10.75.3.70;
+        allow 10.75.3.19;
+        allow 10.75.4.167;
+        allow 10.75.4.168;
+        # allow [ur ip here];
+        deny all;
+```
+Selain IP yang sudah dicantumkan diatas harusnya tidak bisa mengakses website dengan status 302 Forbidden seperti ini
+![forbiden](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/94961661/73bdfa22-916e-4502-b99a-d87fa2369736)
+Agar kembali ke tampilan semula, tinggal kita tambahkan ip yg kita dapatkan di client di config tersebut `# allow [ur ip here]`
+Setelah itu tampilan akan kembali lagi ke tampilan semula
+![testphp](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/94961661/b2c819ae-14db-44e4-9864-ae040fa0792b)
 
 ### Soal 13
 #### Description :
@@ -427,7 +903,7 @@ service php8.2-fpm restart
 Nampaknya hanya menggunakan PHP-FPM tidak cukup untuk meningkatkan performa dari worker maka implementasikan Least-Conn pada Eisen. Untuk testing kinerja dari worker tersebut dilakukan sebanyak 100 request dengan 10 request/second. 
 
 #### PoC :
-Implementasikan **Least-Conn** oada Eisen :
+Implementasikan **Least-Conn** pada Eisen :
 ```bash
 echo '
 upstream worker {
