@@ -199,6 +199,7 @@ Melakukan hal yang sama dengan ke-worker
 ```
 
 ```lynx localhost:8001```
+
 ![Picture1](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/89828723/923f672d-f9a1-4d9e-b3ee-1a159ea3520a)
 
 ### Soal 15
@@ -258,6 +259,7 @@ ab -n 100 -c 10 -H "Authorization: Bearer $token" http://10.75.4.1:8001/api/me
 ```
 
 Output:
+
 ![Picture4](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/89828723/1d0e2708-3a47-46b1-8598-d4213ff1267c)
 
 ### Soal 18
@@ -308,6 +310,7 @@ Jalankan command
 ```ab -n 100 -c 10 -p login.json -T application/json http://riegel.canyon.it23.com/api/auth/login```
 
 Output:
+
 ![Picture5](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/89828723/aae501cb-bcd4-4fcc-ad48-38fccd80383e)
 
 
@@ -434,5 +437,6 @@ upstream worker {
 ```
 
 Output:
+
 ![Picture12](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/89828723/66ecf397-b328-4cbf-83fc-904792d45eeb)
 
