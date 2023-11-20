@@ -79,7 +79,7 @@ skip-bind-address' > /etc/mysql/my.cnf
 service mysql restart
 ```
 
-Output :
+## Output :
 ![Cuplikan layar 2023-11-20 114536](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/89828723/34b22820-e8ed-41c0-b448-23080e601b43)
 
 Lalu melakukan konfigurasi pada 3 Worker Laravel
@@ -219,7 +219,8 @@ Masukkan config ke ```nano register.json```
 
 Lalu, run ```ab -n 100 -c 10 -p register.json -T application/json http://10.75.4.1:8001/api/auth/register``` pada Client
 
-Output :
+## Output :
+
 ![Picture2](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/89828723/9c7a8e10-0fa0-45ec-925b-64f18e7a756c)
 
 ### Soal 16
@@ -239,7 +240,8 @@ Masukkan config ke ```nano login.json```
 
 Lalu, run ```ab -n 100 -c 10 -p login.json -T application/json http://10.75.4.1:8001/api/auth/login``` pada Client
 
-Output:
+## Output:
+
 ![Picture3](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/89828723/3f1bba3a-80ed-4460-8cdd-1e49c20a6006)
 
 ### Soal 17
@@ -309,7 +311,7 @@ Jalankan command
 
 ```ab -n 100 -c 10 -p login.json -T application/json http://riegel.canyon.it23.com/api/auth/login```
 
-Output:
+## Output:
 
 ![Picture5](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/89828723/aae501cb-bcd4-4fcc-ad48-38fccd80383e)
 
@@ -317,15 +319,15 @@ Output:
 Pada FFF Worker
 mengecek log pada ```cat /var/log/nginx/deploy_access.log```
 
-Output:
+## Output:
 
-**Frieren**
+#### Frieren
 ![Picture6](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/89828723/db2a119b-c82e-48f2-b3a6-fb1e83c38a9d)
 
-**Frieren**
+#### Frieren
 ![Picture7](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/89828723/0b9b2b16-f6d2-4b03-b878-24f1af13e347)
 
-**Fern**
+#### Fern
 ![Picture8](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/89828723/2696a00d-40db-4e31-8680-d05fbdc3cb75)
 
 ### Soal 19
@@ -409,7 +411,7 @@ pm.max_spare_servers = 11' > /etc/php/8.0/fpm/pool.d/www.conf
 service php8.2-fpm restart
 ```
 
-Output:
+## Output:
 #### test1.sh
 ![Picture9](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/89828723/bf5fd774-7d12-4943-9e7d-48eb3d507ea0)
 
@@ -436,7 +438,7 @@ upstream worker {
 }
 ```
 
-Output:
+## Output:
 
 ![Picture12](https://github.com/RenDaemon/Jarkom-Modul-3-IT23-2023/assets/89828723/66ecf397-b328-4cbf-83fc-904792d45eeb)
 
