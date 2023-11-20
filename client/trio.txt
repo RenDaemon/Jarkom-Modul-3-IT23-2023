@@ -1,0 +1,42 @@
+Benchmarking 10.75.2.3 (be patient)
+Completed 100 requests
+Completed 200 requests
+Finished 200 requests
+
+
+Server Software:        nginx/1.14.2
+Server Hostname:        10.75.2.3
+Server Port:            80
+
+Document Path:          /
+Document Length:        625 bytes
+
+Concurrency Level:      10
+Time taken for tests:   0.325 seconds
+Complete requests:      200
+Failed requests:        67
+   (Connect: 0, Receive: 0, Length: 67, Exceptions: 0)
+Total transferred:      152333 bytes
+HTML transferred:       124933 bytes
+Requests per second:    614.87 [#/sec] (mean)
+Time per request:       16.264 [ms] (mean)
+Time per request:       1.626 [ms] (mean, across all concurrent requests)
+Transfer rate:          457.35 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    3   1.6      2       8
+Processing:     2   13   3.1     13      20
+Waiting:        2   13   3.1     13      20
+Total:          4   16   3.6     16      24
+
+Percentage of the requests served within a certain time (ms)
+  50%     16
+  66%     17
+  75%     18
+  80%     19
+  90%     21
+  95%     22
+  98%     22
+  99%     24
+ 100%     24 (longest request)

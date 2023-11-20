@@ -1,0 +1,5 @@
+no,algortihm,request per second
+1,round-robbin,423.26s
+2,least,558.86s
+3,hash,480.42s
+4,generic-hash,435.58s
